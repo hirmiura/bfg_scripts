@@ -5,6 +5,7 @@
 # Bitmap Font Generator Configuration file class
 from __future__ import annotations
 
+import inspect
 import io
 import re
 import sys
@@ -268,6 +269,28 @@ outlineThickness={self.outlineThickness}
     def save(self, file) -> None:
         with open(file, 'w') as f:
             f.write(str(self))
+
+    def apply_dict(self, d: dict) -> None:
+        assert d is not None
+        attrs = dict(inspect.getmembers(self, lambda x: not callable(x)))
+        for k, v in d.items():
+            if k not in attrs:
+                continue
+            var = attrs[k]
+            ty = type(var)
+            if ty is int:
+                setattr(self, k, int(v))
+            elif ty is float:
+                setattr(self, k, float(v))
+            elif ty is str:
+                setattr(self, k, str(v))
+            elif k == 'chars':
+                numlist = v.split(',')
+                for nums in numlist:
+                    n1, *n2 = nums.split('-')
+                    n1 = int(n1)
+                    n2 = int(n2[0]) if n2 else None
+                    self.chars.append(NumRange(n1, n2))
 
 
 def test():
