@@ -16,7 +16,8 @@ def pargs() -> None:
     global args
     parser = argparse.ArgumentParser(
         description='2つのfntファイルを比較して使用している文字コードの差を出力する')
-    parser.add_argument('files', nargs=2, help='2つの入力ファイル')
+    parser.add_argument('file1', help='入力ファイル1')
+    parser.add_argument('file2', help='入力ファイル2')
     args = parser.parse_args()
 
 
@@ -33,7 +34,7 @@ def parse_file(file: str) -> set:
 
 def process() -> None:
     lids = []
-    for file in args.files:
+    for file in [args.file1, args.file2]:
         # print(f'{file} を処理中...', flush=True)
         ids = parse_file(file)
         lids.append(ids)
