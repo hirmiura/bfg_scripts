@@ -16,14 +16,21 @@ def pargs() -> None:
     global args
     parser = argparse.ArgumentParser(
         description='2つのfntファイルを比較して使用している文字コードの差を出力する')
-    parser.add_argument('files', nargs=2, help='2つの入力ファイル')
+    parser.add_argument('-a', action='store_true', help='追加された文字コードを表示する')
+    parser.add_argument('-s', action='store_true', help='削除された文字コードを表示する')
+    parser.add_argument('-i', action='store_true', help='共通の文字コードを表示する')
+    parser.add_argument('-x', action='store_true', help='文字コードを16進数で表示する')
+    parser.add_argument('-c', action='store_true', help='文字コードを文字として表示する')
+    parser.add_argument('file1', help='入力ファイル1')
+    parser.add_argument('file2', help='入力ファイル2')
+    parser.add_argument('--version', action='version', version='%(prog)s 0.2.0')
     args = parser.parse_args()
 
 
 def parse_file(file: str) -> set:
     assert file is not None
     ids = set()
-    with open(file, 'r') as f:
+    with open(file) as f:
         for line in f:
             match = CHAR_REX.match(line)
             if match:
@@ -31,9 +38,31 @@ def parse_file(file: str) -> set:
     return ids
 
 
+def print_codes(codes) -> None:
+    assert codes is not None
+    if len(codes) == 0:
+        # 要素数が0なら何もしない
+        return
+    # ソートする
+    codes = sorted(codes)
+    if args.c:
+        # 文字で表示する
+        converted = map(chr, codes)
+    elif args.x:
+        # 16進数で表示する
+        converted = map(lambda i: format(i, 'x'), codes)
+    else:
+        # 10進数で表示する
+        converted = map(str, codes)
+    # 文字連結
+    result = ', '.join(converted)
+    # 表示
+    print(result)
+
+
 def process() -> None:
     lids = []
-    for file in args.files:
+    for file in [args.file1, args.file2]:
         # print(f'{file} を処理中...', flush=True)
         ids = parse_file(file)
         lids.append(ids)
@@ -51,8 +80,14 @@ def process() -> None:
     keta = (max(len(astr), len(sstr), len(istr)))
     # 結果表示
     print(f'追加: {astr: >{keta}}')
+    if args.a:
+        print_codes(add)
     print(f'削除: {sstr: >{keta}}')
+    if args.s:
+        print_codes(sub)
     print(f'共通: {istr: >{keta}}')
+    if args.i:
+        print_codes(inter)
 
 
 def main():
