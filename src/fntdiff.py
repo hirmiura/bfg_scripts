@@ -24,7 +24,7 @@ def pargs() -> None:
 def parse_file(file: str) -> set:
     assert file is not None
     ids = set()
-    with open(file, 'r') as f:
+    with open(file) as f:
         for line in f:
             match = CHAR_REX.match(line)
             if match:
