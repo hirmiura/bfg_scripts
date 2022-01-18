@@ -136,6 +136,7 @@ class BMFC:
     def read(cls, text: str):
         result = cls()
         tli = text.splitlines()
+        attrs = dict(inspect.getmembers(result, lambda x: not callable(x)))
         for line in tli:
             # コメントと空行
             if re.match(r'\s*#|\s*$', line):
@@ -155,16 +156,18 @@ class BMFC:
             # その他
             m = re.match(r'(\w+)=(\w+)', line)
             if m:
-                var = getattr(result, m.group(1))
-                if var:
-                    ty = type(var)
-                    val = m.group(2)
-                    if ty is int:
-                        var = int(val)
-                    elif ty is float:
-                        var = float(val)
-                    elif ty is str:
-                        var = val
+                k = m.group(1)
+                if k not in attrs:
+                    continue
+                var = attrs[k]
+                ty = type(var)
+                v = m.group(2)
+                if ty is int:
+                    setattr(result, k, int(v))
+                elif ty is float:
+                    setattr(result, k, float(v))
+                elif ty is str:
+                    setattr(result, k, str(v))
         return result
 
     @classmethod
