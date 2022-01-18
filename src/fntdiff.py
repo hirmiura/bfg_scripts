@@ -41,13 +41,22 @@ def parse_file(file: str) -> set:
 def print_codes(codes) -> None:
     assert codes is not None
     if len(codes) == 0:
+        # 要素数が0なら何もしない
         return
+    # ソートする
     codes = sorted(codes)
     if args.c:
-        convert = map(chr, codes)
+        # 文字で表示する
+        converted = map(chr, codes)
+    elif args.x:
+        # 16進数で表示する
+        converted = map(lambda i: format(i, 'x'), codes)
     else:
-        convert = map(lambda i: format(i, 'x'), codes) if args.x else map(str, codes)
-    result = ', '.join(convert)
+        # 10進数で表示する
+        converted = map(str, codes)
+    # 文字連結
+    result = ', '.join(converted)
+    # 表示
     print(result)
 
 
