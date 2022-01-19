@@ -11,17 +11,13 @@ from __future__ import annotations
 import copy
 import io
 import json
-import os
 import re
-import shutil
-import subprocess
 import sys
 from dataclasses import dataclass, field
 
 from BMFC import BMFC
 
 
-BMFONT_EXE = 'bmfont64.exe'
 BMFCGEN_JSON_FILE = 'bmfcgen.json'
 
 
@@ -103,23 +99,10 @@ def generate_bmfc():
     print(f'{count} ファイル生成完了', flush=True)
 
 
-def generate_font():
-    print('ビットマップフォントを生成中...', flush=True)
-    count: int = 0
-    for conf in bmf_config:
-        count += 1
-        print('==>' + conf.fnt_file, flush=True)
-        com = [BMFONT_EXE, '-c', conf.bmfc_file, '-o', conf.fnt_file]
-        subprocess.run(com, shell=True)
-    print(f'{count} フォント生成完了', flush=True)
-
-
 def main():
     print('bmfcgen.py', flush=True)
     init_config()
     generate_bmfc()
-    print()
-    generate_font()
     return 0
 
 
