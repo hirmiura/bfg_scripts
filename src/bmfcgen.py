@@ -22,7 +22,6 @@ from BMFC import BMFC
 
 
 BMFONT_EXE = 'bmfont64.exe'
-DST_DIR = '../mod/graphics/fonts/'
 BMFCGEN_JSON_FILE = 'bmfcgen.json'
 
 
@@ -115,28 +114,12 @@ def generate_font():
     print(f'{count} フォント生成完了', flush=True)
 
 
-def install():
-    print('生成したファイルをインストール中...', flush=True)
-    for conf in bmf_config:
-        print('==>' + conf.outputfile, flush=True)
-        print(f'Move {conf.png_file} to {DST_DIR}{conf.png_file}', flush=True)
-        shutil.move(conf.png_file, DST_DIR + conf.png_file)
-        for fnt in conf.nameInStarsector:
-            print(f'Copy {conf.fnt_file} to {DST_DIR}{fnt}.fnt', flush=True)
-            shutil.copy2(conf.fnt_file, DST_DIR + fnt + '.fnt')
-        print(f'Remove {conf.fnt_file}', flush=True)
-        os.remove(conf.fnt_file)
-    print('インストール完了', flush=True)
-
-
 def main():
     print('bmfcgen.py', flush=True)
     init_config()
     generate_bmfc()
     print()
     generate_font()
-    print()
-    install()
     return 0
 
 
