@@ -32,7 +32,7 @@ spacingHoriz=1
 spacingVert=1
 useFixedHeight=0
 forceZero=0
-widthPaddingFactor=0.0
+widthPaddingFactor=0.00
 
 # output file
 outWidth=2048
