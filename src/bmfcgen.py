@@ -65,7 +65,15 @@ def init_config():
         c.chars = temp.chars
 
 
-def readJsonc(file: str):
+def readJsonc(file: str) -> dict:
+    """Cコメント付きJSONファイルを読み込む
+
+    Args:
+        file (str): JSONファイル
+
+    Returns:
+        dict: JOSNオブジェクト
+    """
     with open(file) as f:
         text = f.read()
     text = re.sub(r'/\*[\s\S]*?\*/|//.*', '', text)
