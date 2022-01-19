@@ -9,8 +9,10 @@
 from __future__ import annotations
 
 import io
+import json
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -61,6 +63,13 @@ def init_config():
     temp = BMFC.load(BMFC_TEMP_FILE)
     for c in bmf_config:
         c.chars = temp.chars
+
+
+def readJsonc(file: str):
+    with open(file) as f:
+        text = f.read()
+    text = re.sub(r'/\*[\s\S]*?\*/|//.*', '', text)
+    return json.loads(text)
 
 
 def generate_bmfc():
