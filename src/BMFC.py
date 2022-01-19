@@ -154,7 +154,7 @@ class BMFC:
                 continue
 
             # その他
-            m = re.match(r'(\w+)=(\w+)', line)
+            m = re.match(r'(\w+)=(.+)', line)
             if m:
                 k = m.group(1)
                 if k not in attrs:
