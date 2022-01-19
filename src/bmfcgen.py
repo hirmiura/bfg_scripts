@@ -11,25 +11,19 @@ from __future__ import annotations
 import copy
 import io
 import json
-import os
 import re
-import shutil
-import subprocess
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from BMFC import BMFC
 
 
-BMFONT_EXE = 'bmfont64.exe'
-DST_DIR = '../mod/graphics/fonts/'
 BMFCGEN_JSON_FILE = 'bmfcgen.json'
 
 
 @dataclass
 class BmfGenConf(BMFC):
     outputfile: str = ''
-    nameInStarsector: list[str] = field(default_factory=list)
 
     @property
     def bmfc_file(self):
@@ -42,11 +36,6 @@ class BmfGenConf(BMFC):
     @property
     def png_file(self):
         return self.outputfile + '_0.png'
-
-    def apply_dict(self, d: dict) -> None:
-        super().apply_dict(d)
-        if 'nameInStarsector' in d:
-            self.nameInStarsector = d['nameInStarsector']
 
 
 def read_jsonc(file: str) -> dict:
@@ -104,52 +93,11 @@ def generate_bmfc():
     print(f'{count} ファイル生成完了', flush=True)
 
 
-def generate_font():
-    print('ビットマップフォントを生成中...', flush=True)
-    count: int = 0
-    for conf in bmf_config:
-        count += 1
-        print('==>' + conf.fnt_file, flush=True)
-        com = [BMFONT_EXE, '-c', conf.bmfc_file, '-o', conf.fnt_file]
-        subprocess.run(com, shell=True)
-    print(f'{count} フォント生成完了', flush=True)
-
-
-def install():
-    print('生成したファイルをインストール中...', flush=True)
-    for conf in bmf_config:
-        print('==>' + conf.outputfile, flush=True)
-        print(f'Move {conf.png_file} to {DST_DIR}{conf.png_file}', flush=True)
-        shutil.move(conf.png_file, DST_DIR + conf.png_file)
-        for fnt in conf.nameInStarsector:
-            print(f'Copy {conf.fnt_file} to {DST_DIR}{fnt}.fnt', flush=True)
-            shutil.copy2(conf.fnt_file, DST_DIR + fnt + '.fnt')
-        print(f'Remove {conf.fnt_file}', flush=True)
-        os.remove(conf.fnt_file)
-    print('インストール完了', flush=True)
-
-
 def main():
     print('bmfcgen.py', flush=True)
-
-    if len(sys.argv) > 1 and sys.argv[1] == 'clean':
-        clean()
-        return 0
-
     init_config()
     generate_bmfc()
-    print()
-    generate_font()
-    print()
-    install()
     return 0
-
-
-def clean():
-    print('ファイルを削除...', flush=True)
-    subprocess.run(['del', '*.bmfc'], shell=True)
-    subprocess.run(['del', '*.fnt'], shell=True)
-    subprocess.run(['del', '*.png'], shell=True)
 
 
 if __name__ == '__main__':

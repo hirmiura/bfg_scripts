@@ -28,5 +28,3 @@ def test_init_config():
     assert c.renderFromOutline == 0
     assert c.outWidth == 4096
     assert c.outHeight == 2048
-    assert len(c.nameInStarsector) == 1
-    assert c.nameInStarsector[0] == "insignia15LTaa"
