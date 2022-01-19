@@ -13,7 +13,7 @@ import io
 import json
 import re
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from BMFC import BMFC
 
@@ -24,7 +24,6 @@ BMFCGEN_JSON_FILE = 'bmfcgen.json'
 @dataclass
 class BmfGenConf(BMFC):
     outputfile: str = ''
-    nameInStarsector: list[str] = field(default_factory=list)
 
     @property
     def bmfc_file(self):
@@ -37,11 +36,6 @@ class BmfGenConf(BMFC):
     @property
     def png_file(self):
         return self.outputfile + '_0.png'
-
-    def apply_dict(self, d: dict) -> None:
-        super().apply_dict(d)
-        if 'nameInStarsector' in d:
-            self.nameInStarsector = d['nameInStarsector']
 
 
 def read_jsonc(file: str) -> dict:
