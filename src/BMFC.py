@@ -30,12 +30,12 @@ class NumRange:
             self._end = begin
 
     def __eq__(self, other):
-        if isinstance(other, NumRange):
+        if not isinstance(other, NumRange):
             return NotImplemented
         return self._begin == other._begin and self._end == other._end
 
     def __lt__(self, other):
-        if isinstance(other, NumRange):
+        if not isinstance(other, NumRange):
             return NotImplemented
         if self._begin != other._begin:
             return self._begin < other._begin
