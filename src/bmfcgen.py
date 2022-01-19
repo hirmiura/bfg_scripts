@@ -74,7 +74,7 @@ def readJsonc(file: str) -> dict:
     Returns:
         dict: JOSNオブジェクト
     """
-    with open(file) as f:
+    with open(file, encoding='utf-8') as f:
         text = f.read()
     text = re.sub(r'/\*[\s\S]*?\*/|//.*', '', text)
     return json.loads(text)
