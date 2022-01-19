@@ -8,9 +8,11 @@
 # のんびり待つ
 from __future__ import annotations
 
+import copy
 import io
+import json
 import os
-import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -18,10 +20,10 @@ from dataclasses import dataclass, field
 
 from BMFC import BMFC
 
+
 BMFONT_EXE = 'bmfont64.exe'
 DST_DIR = '../mod/graphics/fonts/'
-SRC_DIR = pathlib.Path(__file__).parent
-BMFC_TEMP_FILE = 'bmfc_template.txt'
+BMFCGEN_JSON_FILE = 'bmfcgen.json'
 
 
 @dataclass
@@ -41,26 +43,55 @@ class BmfGenConf(BMFC):
     def png_file(self):
         return self.outputfile + '_0.png'
 
+    def apply_dict(self, d: dict) -> None:
+        super().apply_dict(d)
+        if 'nameInStarsector' in d:
+            self.nameInStarsector = d['nameInStarsector']
 
-bmf_config = [
-    BmfGenConf(outputfile='Sika15aa', fontName='Cica', fontFile='Cica-Regular.otf',
-               fontSize=-15, aa=4, renderFromOutline=0,
-               outWidth=4096, outHeight=2048, nameInStarsector=['insignia15LTaa']),
 
-    BmfGenConf(outputfile='Sika21aa', fontName='Cica', fontFile='Cica-Regular.otf',
-               fontSize=-21, aa=4, renderFromOutline=0,
-               outWidth=4096, outHeight=4096, nameInStarsector=['insignia21LTaa']),
+def read_jsonc(file: str) -> dict:
+    """Cコメント付きJSONファイルを読み込む
 
-    BmfGenConf(outputfile='Sika25aa', fontName='Cica', fontFile='Cica-Regular.otf',
-               fontSize=-25, aa=4, renderFromOutline=0,
-               outWidth=4096, outHeight=4096, nameInStarsector=['insignia25LTaa']),
-]
+    Args:
+        file (str): JSONファイル
+
+    Returns:
+        dict: JOSNオブジェクト
+    """
+    with open(file, encoding='utf-8') as f:
+        text = f.read()
+    text = re.sub(r'/\*[\s\S]*?\*/|//.*', '', text)
+    return json.loads(text)
 
 
 def init_config():
-    temp = BMFC.load(BMFC_TEMP_FILE)
-    for c in bmf_config:
-        c.chars = temp.chars
+    TEMP_KEY = 'template'
+    CONFIG_KEY = 'config'
+
+    # 設定リスト
+    global bmf_config
+    bmf_config = []
+
+    # JSON設定ファイルを読み込む
+    jobj = read_jsonc(BMFCGEN_JSON_FILE)
+
+    # 全体用テンプレートを読み込む
+    world_temp = BmfGenConf.load(jobj[TEMP_KEY]) if TEMP_KEY in jobj else BmfGenConf()
+
+    # 設定リストを読み込む
+    if CONFIG_KEY in jobj:
+        for c in jobj[CONFIG_KEY]:
+            cdict = c
+            # 全体用テンプレートからコピーする
+            citem = copy.copy(world_temp)
+            if TEMP_KEY in cdict:
+                # 個別テンプレートがあれば読み込む
+                citem.load(c[TEMP_KEY])
+                del cdict[TEMP_KEY]
+            # 残りの設定を読み込む
+            citem.apply_dict(cdict)
+            # 設定リストに追加する
+            bmf_config.append(citem)
 
 
 def generate_bmfc():

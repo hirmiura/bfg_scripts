@@ -1,0 +1,35 @@
+{
+    // 全体に反映するテンプレート
+    "template": "bmfc_template.txt",
+    "config": [
+        {
+            // 個別に反映するテンプレート
+            "template": "bmfc_template.txt",
+            "outputfile": "Sika15aa",
+            "fontName": "Cica",
+            "fontFile": "Cica-Regular.otf",
+            "fontSize": -15,
+            "aa": 4,
+            "renderFromOutline": 0,
+            "outWidth": 4096,
+            "outHeight": 2048,
+            "nameInStarsector": ["insignia15LTaa"]
+        },
+        {
+            "outputfile": "Sika21aa",
+            "fontSize": 21,
+            "aa": 4,
+            "outWidth": 4096,
+            "outHeight": 4096,
+            "nameInStarsector": ["insignia21LTaa"]
+        },
+        {
+            "outputfile": "Sika25aa",
+            "fontSize": 25,
+            "aa": 4,
+            "outWidth": 4096,
+            "outHeight": 4096,
+            "nameInStarsector": ["insignia25LTaa"]
+        }
+    ]
+}
