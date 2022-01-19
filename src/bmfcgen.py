@@ -131,11 +131,6 @@ def install():
 
 def main():
     print('bmfcgen.py', flush=True)
-
-    if len(sys.argv) > 1 and sys.argv[1] == 'clean':
-        clean()
-        return 0
-
     init_config()
     generate_bmfc()
     print()
@@ -143,13 +138,6 @@ def main():
     print()
     install()
     return 0
-
-
-def clean():
-    print('ファイルを削除...', flush=True)
-    subprocess.run(['del', '*.bmfc'], shell=True)
-    subprocess.run(['del', '*.fnt'], shell=True)
-    subprocess.run(['del', '*.png'], shell=True)
 
 
 if __name__ == '__main__':
